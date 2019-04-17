@@ -6,7 +6,7 @@
 /*   By: smorty <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/15 15:53:26 by smorty            #+#    #+#             */
-/*   Updated: 2019/04/16 21:44:51 by smorty           ###   ########.fr       */
+/*   Updated: 2019/04/17 23:05:14 by smorty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,15 @@
 # include <unistd.h>
 # include "libft/libft.h"
 
-# define BUFF_SIZE 2
+# define BUFF_SIZE 1
 
-typedef struct	s_str
+typedef struct	s_file
 {
-	char	*s;
-	int		file;
-	struct s_str	*next;
-}				t_str;
+	char			*tail;
+	int				file;
+	struct s_file	*next;
+}				t_file;
 
 int				get_next_line(const int fd, char **line);
-int				gnl_lst(const int fd, char **line, t_str **list);
 
 #endif

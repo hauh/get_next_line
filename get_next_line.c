@@ -6,45 +6,54 @@
 /*   By: smorty <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/15 15:36:49 by smorty            #+#    #+#             */
-/*   Updated: 2019/04/16 22:13:35 by smorty           ###   ########.fr       */
+/*   Updated: 2019/04/17 23:11:13 by smorty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-#include <stdio.h>
-
-static int	find_newline(char *buf)
+static int		find_newline(char *s)
 {
-	char *buf0;
+	char *s0;
 
-	buf0 = buf;
-	while (*buf)
+	if (s)
 	{
-		if (*buf == '\n')
-			return (buf - buf0);
-		buf++;
+		s0 = s;
+		while (*s)
+		{
+			if (*s == '\n')
+				return (s - s0 + 1);
+			s++;
+		}
 	}
 	return (0);
 }
 
-int	gnl_lst(const int fd, char **line, t_str **list)
+static t_file	*create_list(int fd)
+{
+	t_file *list;
+
+	list = (t_file *)malloc(sizeof(t_file));
+	list->tail = (char *)malloc(sizeof(char) * BUFF_SIZE);
+	*list->tail = '\0';
+	list->file = fd;
+	list->next = NULL;
+	return (list);
+}
+
+static int		gnl_list(int fd, char **line, t_file **list)
 {
 	char	buf[BUFF_SIZE + 1];
-	int n;
-	int i;
+	char	*clear;
+	char	*s;
+	int		n;
 
 	if (!*list)
-	{
-		*list = (t_str *)malloc(sizeof(t_str));
-		(*list)->s = (char *)malloc(sizeof(char));
-		*(*list)->s = '\0';
-		(*list)->file = fd;
-		(*list)->next = NULL;
-	}
+		*list = create_list(fd);
 	if (fd != (*list)->file)
-		return (gnl_lst(fd, line, &(*list)->next));
-	while (!find_newline((*list)->s))
+		return (gnl_list(fd, line, &(*list)->next));
+	s = *(*list)->tail ? ft_strdup((*list)->tail) : ft_strnew(0);
+	while (!find_newline(s))
 	{
 		n = read(fd, buf, BUFF_SIZE);
 		if (!n)
@@ -52,41 +61,34 @@ int	gnl_lst(const int fd, char **line, t_str **list)
 		if (n < 0)
 			return (-1);
 		buf[n] = '\0';
-		(*list)->s = ft_strjoin((*list)->s, buf);
+		clear = s;
+		s = ft_strjoin(s, buf);
+		free(clear);
 	}
-	if (!*((*list)->s))
-		return (0);
-	i = find_newline((*list)->s);
-	if (!i)
-		return (0);
-	*line = ft_strndup((*list)->s, i);
-	(*list)->s = (*list)->s + i;
+	n = find_newline(s);
+	if (!n)
+	{
+		if (!ft_strlen(s))
+		{
+			free(s);
+			return (0);
+		}
+		*line = ft_strdup(s);
+		if (*(*list)->tail)
+			*(*list)->tail = '\0';
+	}
+	else
+	{
+		*line = ft_strndup(s, n - 1);
+		(*list)->tail = ft_strcpy((*list)->tail, s + n);
+	}
+	free(s);
 	return (1);
 }
 
-int			get_next_line(const int fd, char **line)
+int				get_next_line(const int fd, char **line)
 {
-	static t_str *list = NULL;
+	static t_file *list = NULL;
 
-	return (gnl_lst(fd, line, &list));
-}
-
-int main(int argc, char **argv)
-{
-	char *line;
-	unsigned int i;
-	int fd;
-
-	i = 1;
-	if (argc > 1)
-	{
-		fd = open(argv[1], O_RDONLY);
-		while (i)
-		{
-			printf("main:%d\n", i = get_next_line(fd, &line));
-			if (i)
-				printf("main:%s\n", line);
-		}
-	}
-	return (0);
+	return (gnl_list(fd, line, &list));
 }
