@@ -6,7 +6,7 @@
 /*   By: smorty <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/15 15:53:26 by smorty            #+#    #+#             */
-/*   Updated: 2019/04/18 18:28:22 by smorty           ###   ########.fr       */
+/*   Updated: 2019/04/18 19:37:57 by smorty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <fcntl.h>
 # include "libft/libft.h"
 
-# define BUFF_SIZE 11
+# define BUFF_SIZE 1
 
 typedef struct	s_file
 {
