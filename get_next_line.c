@@ -6,7 +6,7 @@
 /*   By: smorty <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/15 15:36:49 by smorty            #+#    #+#             */
-/*   Updated: 2019/04/18 18:07:35 by smorty           ###   ########.fr       */
+/*   Updated: 2019/07/02 19:24:03 by smorty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ int				get_next_line(const int fd, char **line)
 {
 	static t_file *list = NULL;
 
-	if (BUFF_SIZE < 1)
+	if (BUFF_SIZE < 1 || !line)
 		return (-1);
 	return (gnl_list(fd, line, &list));
 }
